@@ -1,5 +1,7 @@
 import abc
-from numpy import mean, maximum 
+import numpy as np
+from numpy import maximum
+
 
 class Payoff(object, metaclass=abc.ABCMeta):
     @property
@@ -13,7 +15,7 @@ class Payoff(object, metaclass=abc.ABCMeta):
     def expiry(self, newExpiry):
         """Set the expiry date."""
         pass
-    
+
     @abc.abstractmethod
     def payoff(self):
         pass
@@ -24,7 +26,7 @@ class VanillaPayoff(Payoff):
         self.__expiry = expiry
         self.__strike = strike
         self.__payoff = payoff
-        
+
     @property
     def expiry(self):
         return self.__expiry
@@ -32,11 +34,11 @@ class VanillaPayoff(Payoff):
     @expiry.setter
     def expiry(self, new_expiry):
         self.__expiry = new_expiry
-    
-    @property 
+
+    @property
     def strike(self):
         return self.__strike
-    
+
     @strike.setter
     def strike(self, new_strike):
         self.__strike = new_strike
@@ -44,7 +46,6 @@ class VanillaPayoff(Payoff):
     def payoff(self, spot):
         return self.__payoff(self, spot)
 
-    
 def call_payoff(option, spot):
     return maximum(spot - option.strike, 0.0)
 
@@ -52,13 +53,12 @@ def put_payoff(option, spot):
     return maximum(option.strike - spot, 0.0)
 
 
-
 class ExoticPayoff(Payoff):
     def __init__(self, expiry, strike, payoff):
         self.__expiry = expiry
         self.__strike = strike
         self.__payoff = payoff
-        
+
     @property
     def expiry(self):
         return self.__expiry
@@ -66,24 +66,24 @@ class ExoticPayoff(Payoff):
     @expiry.setter
     def expiry(self, new_expiry):
         self.__expiry = new_expiry
-    
-    @property 
+
+    @property
     def strike(self):
         return self.__strike
-    
+
     @strike.setter
     def strike(self, new_strike):
         self.__strike = new_strike
 
     def payoff(self, spot):
         return self.__payoff(self, spot)
-    
-def arithmeticAsianCallPayoff(option, spot):
-   ## Assume that spot is a NumPy ndarray
-   ## Call the `mean` method to get the arithmetic average
-   average = spot.mean()
-   return maximum(average - option.strike, 0.0)
 
-def arithmeticAsianPutPayoff(option, spot):
-    average = spot.mean()
-    return maximum(option.strike - average, 0.0)
+def ArithmeticAsianCallPayoff(option, spot):  # spot is an array of price paths for 1 simulation
+    avg = np.mean(spot)
+    return maximum(avg - option.strike, 0.0)
+
+def ArithmeticAsianPutPayoff(option, spot):
+    avg = np.mean(spot)
+    return maximum(option.strike - avg, 0.0)
+
+

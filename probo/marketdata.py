@@ -41,7 +41,7 @@ class MarketData(object):
     @dividend.setter
     def dividend(self, new_yield):
         self.__dividend = new_yield
-        
+
     def get_data(self):
         return (self.__spot, self.__rate, self.__volatility, self.__dividend)
-    
+
